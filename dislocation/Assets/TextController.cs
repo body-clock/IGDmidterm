@@ -19,8 +19,7 @@ public class TextController : MonoBehaviour
 	void Update()
 	{
 		timer += Time.deltaTime;
-		print(timer);
-
+		
 		if (timer > 4f)
 		{
 			storyText.text = "My shoulder... Feels out of place...";

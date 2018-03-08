@@ -7,69 +7,81 @@ using UnityEngine.UI;
 
 public class PainManager : MonoBehaviour
 {
-
-	public Text painLevelText;
-	public GameObject indicatorText;
-
 	public float pain;
 	public float maxPain;
 	public float indicationPain;
 	public float timeMultiplier;
 
+	public GameObject player;
+
+	public bool isCarrying;
+
 	// Use this for initialization
 	void Start ()
 	{
 
-		pain = 0;
-		maxPain = 5;
+		pain = 5;
+		maxPain = 145;
 		indicationPain = 2.5f;
-		timeMultiplier = 4;
 
+		timeMultiplier = 2;
 
 	}
 	
 	// Update is called once per frame
 	void Update ()
 	{
+		gameObject.GetComponent<RectTransform>().sizeDelta = new Vector2(pain += Time.deltaTime * timeMultiplier, 26);
+		CheckPain();
 
-		pain += Time.deltaTime/timeMultiplier;
-		Debug.Log(pain);
-		painLevelText.text = pain.ToString("F1");
-		
-		CheckPainLevel();
-		GrabVicodin();
-
+		if (player.transform.childCount > 0)
+		{
+			isCarrying = true;
+			
+			Debug.Log("carrying");
+		}
+		else
+		{
+			isCarrying = false;
+			Debug.Log("not carrying");
+		}
 	}
 
-	void CheckPainLevel()
+	void CheckPain()
+	
+	//once pain gets to a ceratin amount, it increses more rapidly, bring it back down with pills
+	//pills spawn slower?
 	{
+		if (pain >= 20)
+		{
+			timeMultiplier = 4.5f;
 
-		if (pain >= indicationPain)
-		{
-			indicatorText.SetActive(true);
-		} else if (pain < indicationPain)
-		{
-			indicatorText.SetActive(false);
-		}
-		
-		if (pain >= maxPain)
-		{
-			SceneManager.LoadScene("end");
+			if (Input.GetMouseButtonDown(0) && isCarrying)
+			{
+				pain -= 3;
+			}
 		}
 
-		if (pain < 0)
+		if (pain >= 50)
 		{
-			SceneManager.LoadScene("end");
+			timeMultiplier = 7;
+			
+			if (Input.GetMouseButtonDown(0) && isCarrying)
+			{
+				pain -= 5;
+			}
 		}
-		
+
+		if (pain > maxPain)
+		{
+			pain = maxPain;
+		}
+
+		if (pain == maxPain)
+		{
+			SceneManager.LoadScene("End");
+		}
 	}
 
-	void GrabVicodin()
-	{
-		if (Input.GetMouseButtonDown(0))
-		{
-			pain -= 1.0f;
-			timeMultiplier -= 0.5f;
-		}
-	}
+
 }
